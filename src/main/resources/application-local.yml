@@ -1,0 +1,88 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sso_db?useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: password
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+          github:
+            client-id: ${GITHUB_CLIENT_ID:}
+            client-secret: ${GITHUB_CLIENT_SECRET:}
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID:}
+            client-secret: ${FACEBOOK_CLIENT_SECRET:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+#otel:
+#  exporter:
+#    otlp:
+#      endpoint: http://localhost:4318
+#  propagation: tracecontext, baggage
+
+# WARNING. DO NOT USE IN PRODUCTION. PRESET YOUR KEY IN TARGET ENVIRONMENT
+crypto:
+  jwk:
+    public-key: |
+      -----BEGIN RSA PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlZAJvrG45d3++fMz88CJ
+      4mIBLEgZmoVLt9lBMqQANy8dtxR+qcph1QMhkhvcb+H9oTt2xw/Pv/atmPPlFIlU
+      fwn/sFhBGWx9ou48HVBByP6c75/bU8xBfMwbzz4/f3fIdsIvqmpsdtGeb1Oz2doU
+      TCUXype2SN0NDVMdr7+63cO5YU2SENaLh96GveE2nactZW1uFcoM5/I6hB9oq2kS
+      MS9hf8qpmPWnI8c+qzP8m5i57KPpjlivfzKE88B5DvGC7ZCkkrOwWrGjNh/45IHX
+      Dod5QUvAchF0otrofxBKcNyf7Gww8fZ5wiQNASf4+IDkURwGlHC8HmLJ9NCQerKL
+      0QIDAQAB
+      -----END RSA PUBLIC KEY-----
+    private-key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCVkAm+sbjl3f75
+      8zPzwIniYgEsSBmahUu32UEypAA3Lx23FH6pymHVAyGSG9xv4f2hO3bHD8+/9q2Y
+      8+UUiVR/Cf+wWEEZbH2i7jwdUEHI/pzvn9tTzEF8zBvPPj9/d8h2wi+qamx20Z5v
+      U7PZ2hRMJRfKl7ZI3Q0NUx2vv7rdw7lhTZIQ1ouH3oa94Tadpy1lbW4Vygzn8jqE
+      H2iraRIxL2F/yqmY9acjxz6rM/ybmLnso+mOWK9/MoTzwHkO8YLtkKSSs7BasaM2
+      H/jkgdcOh3lBS8ByEXSi2uh/EEpw3J/sbDDx9nnCJA0BJ/j4gORRHAaUcLweYsn0
+      0JB6sovRAgMBAAECggEAHMjqSziOvrTtZiND2DGyB+83TRO6U8Y8Rq/KT8oHHZfU
+      lwAbiaehERtnamSw1hqvUwjsCQ9Wu1opWpL0P7HXoJSm0ISH0PITsxg5WyXvZ1Tz
+      lN3WG0hoQTHSV15iX7DI1Ox2Ooz9f5fD76azKmZBuk74R35P77GVmb8pq0HSH+yI
+      ak1NXZcdHxPKOOlZCUq4GT1nHnfzsu1Pp65XnuUpXTTosZ8iM6diwnJ7Lkkb1YE4
+      9qxESeJKLyiGWNJ1dlwOIuBdoi98UhXxhrUV4ZfXBMKYj4tfBv1vyhpPyZWUSQNO
+      J64OjMcB6PhYEZTZH4Dp/glpmmh0OiQ2Czh5C+i1rQKBgQDIG4QPq58329La8NII
+      qy7nt+Kbfescf/pxCQOrJHpypnPEOWON6S9Bfc7a1M7C7I+0mD3XyEcoecGdiuQl
+      SYFeYbD3kyVaJUQ5UsQVd/U3Mmbm7buaBj0yA29TdpDgZb5tnqsSd1YMOsz18Cpt
+      QOc3ehlYaxVvdPoJ//debWq3TQKBgQC/Vl1aX6UveFU32F96IDOxnlnBKqQKmxVf
+      PbPX7XEsN4x71NrE55znRdpmXnwytvwvJZnxJ6APg4GRI5Vz1nS8HoIQlxwZlS8n
+      K/YBUQsoiCo53OnSaxv/C8d3BHDyHJ8b5FzLtv3BeALvwRn8k6ZpOrzEexPqT1YV
+      czyxGldMlQKBgDEjOJmUfiN8Ulm6+whv6LOz3uxpzjsQXhI1sXXsHjlbEGBl60Fk
+      ulrtpsbrrN4Gsv8Yx07eekLBKz8hZQaW9zKS8J7KvkhVkFw3K7lN3KQyNzyLsh6P
+      W6WVXFf1bHv93/YRGVcOgM29/qiB0hlD78Mas3CX0wqsgd3Ewhyo56SdAoGAH37z
+      9wBvjJTeUkcH0G6kk8RhOe7u+d/1cKwTgqPPUVwDgA7VxDvsFBXnkZpUD3UXphsm
+      cA/5xRP8rAuTenH+3UiYWGrHcV6hWG1gHW9dyto/OS8oPj7raNxjhS/x96jGeCzr
+      KY2Bz+sVcKn0wSL87a2BjUZFTPiqTvWdM/oGDNECgYEAx36gV9ip72QNczmKiTdO
+      FlK2f3FATGHzazXO620yMMjaG1Oonif8f1KGf6aRcZDhdYQCsLsMzQ3EVXa85x34
+      SGXX6v/DaNIliyqPKbOG63MAs8AYxzGLaVFNsLe9gUeIjR7u97MKR0pBtgK6oe5+
+      7sKOH3MXJJpoCYMDQ9+HMcU=
+      -----END RSA PRIVATE KEY-----
+
+security:
+  oauth2:
+  # Define Sample Jwt Public Private Key for Local Test Only (Or Use security.jwt.decoder.builder=Auto instead)
+  jwk:
+    builder: PublicKey
+    public-key: ${JWK_PUBLIC_KEY:${crypto.jwk.public-key}}
+    private-key: ${JWK_PRIVATE_KEY:${crypto.jwk.private-key}}
+    token-expiration-in-ms: 1800000
