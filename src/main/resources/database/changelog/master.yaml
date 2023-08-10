@@ -1,0 +1,3 @@
+databaseChangeLog:
+- include:
+    file: database/changelog/main/01_Create_User_Table.yml

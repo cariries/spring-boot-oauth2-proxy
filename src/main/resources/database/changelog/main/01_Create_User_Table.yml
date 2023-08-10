@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_user_table
+      author: charles
+      sql: |
+        create table user (
+          id binary(16) not null default (uuid_to_bin(uuid())),
+          name varchar(255) not null,          
+          email varchar(255) not null unique,
+          image_url varchar(1024),
+          email_verified bit not null default 0,
+          provider varchar(50),
+          provider_id varchar(50),
+          status bit not null default 1,
+          password varchar(1024),
+          create_user varchar(255),
+          create_timestamp datetime(6),  
+          last_update_user varchar(255),
+          last_update_timestamp datetime(6),
+          version bigint not null default 0,
+          primary key (id)
+        );

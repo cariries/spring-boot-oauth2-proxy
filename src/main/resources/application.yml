@@ -1,0 +1,115 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: OAuth2 Proxy Service
+  profiles:
+    active: ${SPRING_ACTIVE:local}
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:database/changelog/master.yaml
+    enabled: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            provider: google
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+            scope:
+              - openid
+              - https://www.googleapis.com/auth/userinfo.profile
+              - https://www.googleapis.com/auth/userinfo.email
+            client-name: Sign in with Google
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+          github:
+            provider: github
+            client-id: ${GITHUB_CLIENT_ID:}
+            client-secret: ${GITHUB_CLIENT_SECRET:}
+            scope:
+              - user:email
+              - read:user
+            client-name: Sign in with GitHub
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+          facebook:
+            provider: facebook
+            client-id: ${FACEBOOK_CLIENT_ID:}
+            client-secret: ${FACEBOOK_CLIENT_SECRET:}
+            scope:
+              - email
+              - public_profile
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+        provider:
+          google:
+            user-name-attribute: email
+          github:
+            user-name-attribute: login
+          facebook:
+            api-version: v17.0
+            authorization-uri: https://www.facebook.com/${spring.security.oauth2.client.provider.facebook.api-version}/dialog/oauth
+            token-uri: https://graph.facebook.com/${spring.security.oauth2.client.provider.facebook.api-version}/oauth/access_token
+            user-info-uri: https://graph.facebook.com/${spring.security.oauth2.client.provider.facebook.api-version}/me?fields=id,first_name,middle_name,last_name,name,email,verified,picture.width(250).height(250)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  tracing:
+    sampling:
+      probability: 1.0
+
+openapi:
+  oauth2-proxy:
+    title: ${spring.application.name}
+    description: API Specification for OAuth2 Proxy Service
+    base-path: /oauth2-proxy/v1
+
+security:
+  cors:
+    allowed-origins:
+      - ${CORS_ALLOWED_ORIGIN:http://localhost:3000}
+    allowed-methods:
+      - GET
+      - POST
+      - OPTIONS
+    allowed-headers:
+      - '*'
+    allow-credentials: true
+  oauth2:
+    authorization-endpoint-base-uri: ${AUTHORIZE_ENDPOINT_BASE_URI:/oauth2/authorize}
+    redirection-endpoint-base-uri: ${REDIRECT_ENDPOINT_BASE_URI:/oauth2/callback/*}
+    authorized-redirect-uris:
+      - http://localhost:3000/oauth2/redirect
+  jwk:
+    builder: Auto
+    token-expiration-in-ms: 1800000
+  authorized-request-matcher:
+    permit-all:
+      - '/oauth2/**'
+      - '/oauth2-proxy/v1/login/**'
+      - '/oauth2-proxy/v1/signup/**'
+      - '/actuator/**'
+      - '/swagger-ui.html'
+      - '/swagger-ui/**'
+      - '/v2/api-docs'
+      - '/v2/api-docs/**'
+      - '/v3/api-docs'
+      - '/v3/api-docs/**'
+      - '/swagger-resources'
+      - '/swagger-resources/**'
+  headers:
+    content-security-policy:
+      policy-directives: default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'
+    http-strict-transport-security:
+      include-sub-domains: true
+      max-age-in-seconds: 31536000
+
+logging:
+  level:
+    org.springframework.web: INFO

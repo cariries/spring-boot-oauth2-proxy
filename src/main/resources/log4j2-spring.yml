@@ -1,0 +1,38 @@
+Configuration:
+  status: warn
+  properties:
+    property:
+    - name: log-path
+      value: "logs"
+    - name: ConsoleLogPattern
+      value: "%d{yyyy-MM-dd HH:mm:ss.SSSXXX} [%5level] [%MDC{traceId},%MDC{spanId},%MDC{user}] [%25t] %40c{1.} : %msg%n"
+    - name: RollingFileLogPattern
+      value: "%d{yyyy-MM-dd HH:mm:ss.SSSXXX} [%5level] [%MDC{traceId},%MDC{spanId},%MDC{user}] [%25t] %40c{1.} : %msg%n"
+  appenders:
+    Console:
+      name: LogToConsole
+      PatternLayout:
+        Pattern: ${ConsoleLogPattern}
+#    RollingFile:
+#      - name: LogToRollingFile
+#        fileName: "${log-path}/app.log"
+#        filePattern: "${log-path}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz"
+#        PatternLayout:
+#          pattern: ${RollingFileLogPattern}
+#        Policies:
+#          SizeBasedTriggeringPolicy:
+#            size: 10MB
+#        DefaultRollOverStrategy:
+#          max: 10
+  Loggers:
+    logger:
+      - name: com.example
+        level: debug
+        additivity: false
+        AppenderRef:
+          - ref: LogToConsole
+#          - ref: LogToRollingFile
+    Root:
+      level: error
+      AppenderRef:
+        ref: LogToConsole

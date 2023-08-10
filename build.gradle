@@ -1,0 +1,106 @@
+plugins {
+    id 'java'
+    id 'org.sonarqube' version '4.3.0.3225'
+    id 'org.openapi.generator' version '6.6.0'
+    id 'org.springframework.boot' version '3.1.2'
+    id 'io.spring.dependency-management' version '1.1.2'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        exclude group: 'org.springframework.boot', module: 'logback-classic'
+        // Exclude Library with Vulnerability (Up to 2023-08-09)
+        exclude group: 'org.mozilla', module: 'rhino'
+        exclude group: 'org.yaml', module: 'snakeyaml'
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+sonarqube {
+    properties {
+        property "sonar.exclusions" "**/swagger/api/*Api.java,**/swagger/invoker/**.java,**/swagger/model/**.java"
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    implementation 'org.apache.commons:commons-lang3'
+    implementation 'org.liquibase:liquibase-core'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.+'
+    implementation 'io.swagger.core.v3:swagger-models:2.2.+'
+    implementation 'org.openapitools:openapi-generator-gradle-plugin:6.6.0'
+
+    implementation 'io.micrometer:micrometer-observation'
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+/*
+task cleanOpenApiGeneratedSources(type: Delete) {
+    delete fileTree("$rootDir/src/main/java/com/example/oauth2proxy") {
+        include 'config/swagger/**.java'
+        include 'swagger/api/**Api.java'
+        include 'swagger/model/**.java'
+    }
+}
+
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$rootDir/src/main/resources/openapi-main.yml".toString()
+    outputDir = "$rootDir".toString()
+    apiPackage = "com.example.oauth2proxy.swagger.api"
+    invokerPackage = "com.example.oauth2proxy.swagger.invoker"
+    modelPackage = "com.example.oauth2proxy.swagger.model"
+    generateApiTests = false
+    skipOverwrite = true
+    configOptions = [
+            configPackage          : "com.example.oauth2proxy.configuration.swagger",
+            dateLibrary            : "java8",
+            useSpringBoot3         : "true",
+            openApiNullable        : "false",
+            hideGenerationTimestamp: "true",
+            serializableModel      : "true",
+            documentationProvider  : "springdoc",
+            useTags                : "true"
+    ]
+}
+
+// Run Gradle Build with argument "--project-cache-dir=../cache", if reported that "Failed to create MD5 hash for file content"
+tasks.compileJava.dependsOn tasks.cleanOpenApiGeneratedSources, tasks.openApiGenerate
+tasks.processResources.dependsOn tasks.openApiGenerate
+*/

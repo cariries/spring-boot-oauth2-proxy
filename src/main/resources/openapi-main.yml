@@ -1,0 +1,185 @@
+openapi: "3.0.0"
+info:
+  title: "Social Login API"
+  description: "API Specification for Social Login"
+  version: 1.0.0
+  contact:
+    email: "cariries.pbiz@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+servers:
+  - url: "{protocol}://{subDomain}{domainName}:{port}{contextPath}{apiVersion}"
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: "https"
+        description: Transmission Protocol
+      subDomain:
+        default:
+        description: 2nd Level Domain
+      domainName:
+        default: "localhost"
+        description: Top Level Domain
+      port:
+        default: "443"
+        description: Port
+      contextPath:
+        default: "/oauth2-proxy"
+        description: Context Path
+      apiVersion:
+        default: "/v1"
+        description: API Version
+
+paths:
+  /login:
+    post:
+      summary: Login
+      tags:
+        - Login
+      operationId: authenticateUser
+      requestBody:
+        description: Login Request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        200:
+          description: Request served successfully, returning result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticationResponse"
+        default:
+          $ref: "#/components/responses/default"
+  /signup:
+    post:
+      summary: Sign Up
+      tags:
+        - Signup
+      operationId: registerUser
+      requestBody:
+        description: Sign Up Request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+      responses:
+        200:
+          description: Request served successfully, returning result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessOperationResponse"
+        default:
+          $ref: "#/components/responses/default"
+  /user/me:
+    get:
+      summary: User Profile of Current Login User
+      tags:
+        - User
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: [ ]
+      responses:
+        200:
+          description: Request served successfully, returning result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          $ref: "#/components/responses/default"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        type:
+          type: string
+        message:
+          type: string
+        source:
+          type: string
+        environment:
+          type: string
+        traceId:
+          type: string
+        details:
+          type: object
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    AuthenticationResponse:
+      type: object
+      properties:
+        tokenType:
+          type: string
+          default: "Bearer"
+        accessToken:
+          type: string
+    SignUpRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        avatar:
+          type: string
+    SuccessOperationResponse:
+      type: object
+      description: Request served successfully, returning result
+      properties:
+        result:
+          type: string
+  responses:
+    401:
+      description: Unauthorized
+      content:
+        application/vnd.error+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    403:
+      description: Forbidden
+      content:
+        application/vnd.error+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    404:
+      description: Requested Resources Not Found
+      content:
+        application/vnd.error+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    default:
+      description: System Internal Error. Please contact System Administrator
+      content:
+        application/vnd.error+json:
+          schema:
+            $ref: "#/components/schemas/Error"
