@@ -1,16 +1,14 @@
 package com.example.oauth2proxy.swagger.api;
 
+import com.example.oauth2proxy.exception.BadRequestException;
 import com.example.oauth2proxy.jpa.entity.User;
 import com.example.oauth2proxy.service.UserService;
 import com.example.oauth2proxy.swagger.model.SignUpRequest;
 import com.example.oauth2proxy.swagger.model.SuccessOperationResponse;
-import com.example.oauth2proxy.exception.BadRequestException;
 import jakarta.annotation.Generated;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -39,7 +37,7 @@ public class SignupApiController implements SignupApi {
     UserService userService;
 
     @Override
-    public ResponseEntity<SuccessOperationResponse> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<SuccessOperationResponse> registerUser(SignUpRequest signUpRequest) {
         if (userService.findByEmail(signUpRequest.getEmail()).isPresent()) {
             throw new BadRequestException("Email address already in use.");
         }

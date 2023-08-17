@@ -19,10 +19,6 @@ configurations {
     all {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
         exclude group: 'org.springframework.boot', module: 'logback-classic'
-        // Exclude Library with Vulnerability (Up to 2023-08-09)
-        exclude group: 'org.mozilla', module: 'rhino'
-        exclude group: 'org.yaml', module: 'snakeyaml'
-        exclude group: 'com.google.guava', module: 'guava'
     }
 }
 
@@ -48,7 +44,7 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3'
     implementation 'org.liquibase:liquibase-core'
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
     implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.+'
     implementation 'io.swagger.core.v3:swagger-models:2.2.+'
@@ -57,6 +53,12 @@ dependencies {
     implementation 'io.micrometer:micrometer-observation'
     implementation 'io.micrometer:micrometer-tracing-bridge-otel'
     implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+
+    // Exclude Library with Vulnerability (Up to 2023-08-09)
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation 'com.google.guava:guava:32.0.0-jre'
+    implementation 'org.mozilla:rhino:1.7.12'
+    implementation 'org.yaml:snakeyaml:2.1'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
