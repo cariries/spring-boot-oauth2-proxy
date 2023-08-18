@@ -4,6 +4,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.owasp.encoder.Encode;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -22,7 +24,7 @@ public final class CookieUtils {
     }
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
+        Cookie cookie = new Cookie(name, Encode.forJava(value));
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
@@ -31,14 +33,7 @@ public final class CookieUtils {
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Cookie[] cookies = request.getCookies();
-        Arrays.stream(cookies).forEach(cookie -> {
-            if (cookie.getName().equals(name)) {
-                cookie.setValue("");
-                cookie.setPath("/");
-                cookie.setMaxAge(0);
-                response.addCookie(cookie);
-            }
-        });
+        Arrays.stream(cookies).filter(cookie -> cookie.getName().equals(name)).forEach(cookie -> addCookie(response, name, StringUtils.EMPTY, 0));
     }
 
     public static String serialize(Serializable object) {

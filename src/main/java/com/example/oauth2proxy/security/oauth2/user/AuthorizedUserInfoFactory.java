@@ -25,10 +25,7 @@ public final class AuthorizedUserInfoFactory {
                 AuthorizedUserInfo.class.getPackageName(), authorizationProvider.getImplementationClassName());
 
         try {
-            if (!implInvokeMap.containsKey(implementedClassName)) {
-                Class<? extends AuthorizedUserInfo> implementedClass = (Class<? extends AuthorizedUserInfo>) Class.forName(implementedClassName);
-                implInvokeMap.put(implementedClassName, implementedClass);
-            }
+            implInvokeMap.putIfAbsent(implementedClassName, (Class<? extends AuthorizedUserInfo>) Class.forName(implementedClassName));
             return implInvokeMap.get(implementedClassName).getDeclaredConstructor(Map.class).newInstance(attributes);
         } catch (ClassNotFoundException e) {
             throw new OAuth2AuthenticationProcessingException("OAuth2UserInfo Implementation Class Not Found. [Class Name: " + implementedClassName + "]", e);

@@ -71,6 +71,9 @@ openapi:
     base-path: /oauth2-proxy/v1
 
 security:
+  csrf:
+    protection-matcher:
+      ant-path-request-matcher-pattern: /oauth2-proxy/v1
   cors:
     allowed-origins:
       - ${CORS_ALLOWED_ORIGIN:http://localhost:3000}

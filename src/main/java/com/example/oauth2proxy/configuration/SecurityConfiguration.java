@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,6 +28,9 @@ public class SecurityConfiguration {
 
     @Value("${security.headers.content-security-policy.policy-directives}")
     String contentSecurityPolicyDirectives;
+
+    @Value("${security.csrf.protection-matcher.ant-path-request-matcher-pattern:}")
+    String csrfProtectionAntPathRequestMatcherPattern;
 
     @Value("${security.headers.http-strict-transport-security.include-sub-domains:false}")
     boolean hstsIncludeSubDomains;
@@ -53,6 +57,9 @@ public class SecurityConfiguration {
             OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) throws Exception {
 
         return http
+                .csrf(csrfConfigurer ->
+                        csrfConfigurer.requireCsrfProtectionMatcher(new AntPathRequestMatcher(csrfProtectionAntPathRequestMatcherPattern)).configure(http)
+                )
                 // Enable CORS (Cross Origin Resource Sharing)
                 .cors(corsConfigurer ->
                         corsConfigurer.configurationSource(corsConfigurationSource(corsConfiguration))
