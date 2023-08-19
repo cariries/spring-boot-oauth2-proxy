@@ -1,5 +1,6 @@
 package com.example.oauth2proxy.configuration;
 
+import com.example.oauth2proxy.exception.ConfigurationException;
 import com.example.oauth2proxy.security.JwtAuthenticationFilter;
 import com.example.oauth2proxy.security.RestAuthenticationEntryPoint;
 import com.example.oauth2proxy.security.oauth2.*;
@@ -54,82 +55,90 @@ public class SecurityConfiguration {
             UserRegistrationOidcUserService userRegistrationOidcUserService,
             OAuth2Configurator oAuth2Configurator,
             OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
-            OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) throws Exception {
+            OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
 
-        return http
-                .csrf(csrfConfigurer ->
-                        csrfConfigurer.requireCsrfProtectionMatcher(new AntPathRequestMatcher(csrfProtectionAntPathRequestMatcherPattern)).configure(http)
-                )
-                // Enable CORS (Cross Origin Resource Sharing)
-                .cors(corsConfigurer ->
-                        corsConfigurer.configurationSource(corsConfigurationSource(corsConfiguration))
-                )
-                // No Session created or used by Spring Security
-                .sessionManagement(sessionManagementConfigurer ->
-                        sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                // Exception Handling
-                .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer.authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                )
-                // Authorized HTTP Requests
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                        authorizationManagerRequestMatcherRegistry
-                                .requestMatchers(
-                                        Optional.ofNullable(authorizeHttpRequestMatcherConfigurator.getPermitAll()).orElse(new ArrayList<>()).toArray(String[]::new)
-                                )
-                                .permitAll()
-                                .requestMatchers(
-                                        Optional.ofNullable(authorizeHttpRequestMatcherConfigurator.getDenyAll()).orElse(new ArrayList<>()).toArray(String[]::new)
-                                )
-                                .denyAll()
-                                .anyRequest()
-                                .authenticated()
-                )
-                // HTTP Header Configuration
-                // 1. Cache Control (Default: Enabled)
-                // 2. Content Type Option (Default: Enabled)
-                // 3. XSS Protection (Default: Enabled)
-                // 4. Content-Security-Policy (Configured in application.yml)
-                // 5. HTTP Strict Transport Policy (Configured in application.yml)
-                // 6. Frame Options (Deny)
-                .headers(headersConfigurer ->
-                        headersConfigurer
-                                .contentSecurityPolicy(
-                                        contentSecurityPolicyConfig -> contentSecurityPolicyConfig.policyDirectives(contentSecurityPolicyDirectives)
-                                )
-                                .httpStrictTransportSecurity(hstsConfig ->
-                                        hstsConfig
-                                                .includeSubDomains(hstsIncludeSubDomains)
-                                                .maxAgeInSeconds(hstsMaxAgeInSeconds)
-                                )
-                                .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny))
-                // OAuth2 Login Configuration
-                .oauth2Login(httpSecurityOAuth2LoginConfigurer ->
-                        httpSecurityOAuth2LoginConfigurer
-                                .authorizationEndpoint(authorizationEndpointConfig ->
-                                        authorizationEndpointConfig
-                                                .baseUri(oAuth2Configurator.getAuthorizationEndpointBaseUri())
-                                                .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
-                                )
-                                .redirectionEndpoint(redirectionEndpointConfig ->
-                                        redirectionEndpointConfig.baseUri(oAuth2Configurator.getRedirectionEndpointBaseUri())
-                                )
-                                .userInfoEndpoint(userInfoEndpointConfig ->
-                                        userInfoEndpointConfig
-                                                .userService(userRegistrationOAuth2UserService)
-                                                .oidcUserService(userRegistrationOidcUserService)
-                                )
-                                .successHandler(oAuth2AuthenticationSuccessHandler)
-                                .failureHandler(oAuth2AuthenticationFailureHandler)
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+        try {
+            return http
+                    .csrf(csrfConfigurer ->
+                            csrfConfigurer.requireCsrfProtectionMatcher(new AntPathRequestMatcher(csrfProtectionAntPathRequestMatcherPattern)).configure(http)
+                    )
+                    // Enable CORS (Cross Origin Resource Sharing)
+                    .cors(corsConfigurer ->
+                            corsConfigurer.configurationSource(corsConfigurationSource(corsConfiguration))
+                    )
+                    // No Session created or used by Spring Security
+                    .sessionManagement(sessionManagementConfigurer ->
+                            sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    )
+                    // Exception Handling
+                    .exceptionHandling(exceptionHandlingConfigurer ->
+                            exceptionHandlingConfigurer.authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                    )
+                    // Authorized HTTP Requests
+                    .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
+                            authorizationManagerRequestMatcherRegistry
+                                    .requestMatchers(
+                                            Optional.ofNullable(authorizeHttpRequestMatcherConfigurator.getPermitAll()).orElse(new ArrayList<>()).toArray(String[]::new)
+                                    )
+                                    .permitAll()
+                                    .requestMatchers(
+                                            Optional.ofNullable(authorizeHttpRequestMatcherConfigurator.getDenyAll()).orElse(new ArrayList<>()).toArray(String[]::new)
+                                    )
+                                    .denyAll()
+                                    .anyRequest()
+                                    .authenticated()
+                    )
+                    // HTTP Header Configuration
+                    // 1. Cache Control (Default: Enabled)
+                    // 2. Content Type Option (Default: Enabled)
+                    // 3. XSS Protection (Default: Enabled)
+                    // 4. Content-Security-Policy (Configured in application.yml)
+                    // 5. HTTP Strict Transport Policy (Configured in application.yml)
+                    // 6. Frame Options (Deny)
+                    .headers(headersConfigurer ->
+                            headersConfigurer
+                                    .contentSecurityPolicy(
+                                            contentSecurityPolicyConfig -> contentSecurityPolicyConfig.policyDirectives(contentSecurityPolicyDirectives)
+                                    )
+                                    .httpStrictTransportSecurity(hstsConfig ->
+                                            hstsConfig
+                                                    .includeSubDomains(hstsIncludeSubDomains)
+                                                    .maxAgeInSeconds(hstsMaxAgeInSeconds)
+                                    )
+                                    .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny))
+                    // OAuth2 Login Configuration
+                    .oauth2Login(httpSecurityOAuth2LoginConfigurer ->
+                            httpSecurityOAuth2LoginConfigurer
+                                    .authorizationEndpoint(authorizationEndpointConfig ->
+                                            authorizationEndpointConfig
+                                                    .baseUri(oAuth2Configurator.getAuthorizationEndpointBaseUri())
+                                                    .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
+                                    )
+                                    .redirectionEndpoint(redirectionEndpointConfig ->
+                                            redirectionEndpointConfig.baseUri(oAuth2Configurator.getRedirectionEndpointBaseUri())
+                                    )
+                                    .userInfoEndpoint(userInfoEndpointConfig ->
+                                            userInfoEndpointConfig
+                                                    .userService(userRegistrationOAuth2UserService)
+                                                    .oidcUserService(userRegistrationOidcUserService)
+                                    )
+                                    .successHandler(oAuth2AuthenticationSuccessHandler)
+                                    .failureHandler(oAuth2AuthenticationFailureHandler)
+                    )
+                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                    .build();
+
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+        try {
+            return authenticationConfiguration.getAuthenticationManager();
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
     }
 }
