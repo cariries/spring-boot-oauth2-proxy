@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'org.sonarqube' version '4.3.0.3225'
     id 'org.openapi.generator' version '6.6.0'
     id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.2'
@@ -24,12 +23,6 @@ configurations {
 
 repositories {
     mavenCentral()
-}
-
-sonarqube {
-    properties {
-        property "sonar.exclusions" "**/swagger/api/*Api.java,**/swagger/invoker/**.java,**/swagger/model/**.java"
-    }
 }
 
 dependencies {
