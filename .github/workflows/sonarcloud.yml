@@ -59,6 +59,7 @@ jobs:
             -Dsonar.projectKey=cariries_spring-boot-oauth2-proxy
             -Dsonar.organization=cariries
             -Dsonar.exclusions=**/swagger/api/*Api.java,**/swagger/invoker/**.java,**/swagger/model/**.java
+            -X
             # Comma-separated paths to directories containing main source files.
             #-Dsonar.sources= # optional, default is project base directory
             # When you need the analysis to take place in a directory other than the one from which it was launched
