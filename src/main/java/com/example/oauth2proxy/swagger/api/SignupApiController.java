@@ -6,7 +6,7 @@ import com.example.oauth2proxy.service.UserService;
 import com.example.oauth2proxy.swagger.model.SignUpRequest;
 import com.example.oauth2proxy.swagger.model.SuccessOperationResponse;
 import jakarta.annotation.Generated;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,23 +18,18 @@ import java.util.Optional;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("${openapi.oauth2-proxy.base-path:/oauth2-proxy/v1}")
 public class SignupApiController implements SignupApi {
 
     private final NativeWebRequest request;
 
-    @Autowired
-    public SignupApiController(NativeWebRequest request) {
-        this.request = request;
-    }
+    private final UserService userService;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
         return Optional.ofNullable(request);
     }
-
-    @Autowired
-    UserService userService;
 
     @Override
     public ResponseEntity<SuccessOperationResponse> registerUser(SignUpRequest signUpRequest) {
