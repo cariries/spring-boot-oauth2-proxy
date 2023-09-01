@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'org.openapi.generator' version '6.6.0'
     id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.2'
@@ -58,8 +59,25 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.mockito:mockito-core:5.5.0'
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "**/configuration/**",
+                    "**/constant/**",
+                    "**/exception/**",
+                    "**/OAuth2ProxyApplication.class"
+            ])
+        }))
+    }
 }
 
 tasks.named('test') {
