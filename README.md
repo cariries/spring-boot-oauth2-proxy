@@ -57,3 +57,10 @@ Charles Chan - cariries.pbiz@gmail.com
 Project Link: [https://github.com/cariries/](https://github.com/cariries/)
 
 <p align="right">(<a href="#readme-top">Back to Top</a>)</p>
+
+<!-- REFERENCE -->
+## Reference
+
+[GitHub - Social Login Demo](https://github.com/callicoder/spring-boot-react-oauth2-social-login-demo)
+
+<p align="right">(<a href="#readme-top">Back to Top</a>)</p>
